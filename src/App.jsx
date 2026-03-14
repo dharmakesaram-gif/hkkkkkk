@@ -97,10 +97,10 @@ const DS = {
 
 const THREAT_CONFIG={
   "All Traffic":    {conf:89,cve:"CVE-2024-3182",  response:"IP automatically blocked — ACL rule applied at perimeter firewall. Admin notified via SIEM alert #7841.",explain:"Detected statistically anomalous request pattern: 340 req/s from single source, deviation 6.2σ above baseline. Matching known DDoS signature."},
-  "Login Attack":   {conf:95,cve:"CVE-2023-48795", response:"SSH access suspended for source IP. MFA enforcement triggered. Account lockout applied after 5 consecutive failures.",explain:"CICIDS2017 SSH Brute Force pattern: 341 failed auths in 4 min. Inter-arrival time 1.2 ms — automated tooling (Hydra/Medusa) detected."},
-  "Network Attack": {conf:97,cve:"CVE-2024-21762", response:"BGP null-route advertised for attacker prefix. Upstream provider notified. Scrubbing centre activated.",explain:"CICIDS2017 DDoS LOIT pattern: 2847 pkt/s UDP flood, avg packet size 60B, high inter-arrival variance (std 0.004 ms). Classic amplification vector."},
-  "Port Scan":      {conf:82,cve:"CVE-2024-0682",  response:"Scan source added to firewall denylist. IDS rule R-112 triggered. Network segment isolated pending investigation.",explain:"CICIDS2017 PortScan SYN sweep: 65535 ports probed in 38s. RST/ACK ratio 0.96 — stealth SYN scan. Source 172.16.0.11 matches known recon actor."},
-  "Malware":        {conf:93,cve:"CVE-2023-44487", response:"C2 channel severed via DNS sinkhole. Infected endpoint quarantined (VLAN 999). IR team dispatched.",explain:"CICIDS2017 Infiltration signature: periodic beacon interval 60s, small encrypted payload 128B, IRC tunnel over port 6667. Known botnet fingerprint."},
+  "Login Attack":   {conf:95,cve:"CVE-2023-48795", response:"SSH access suspended for source IP. MFA enforcement triggered. Account lockout applied after 5 consecutive failures.",explain:" SSH Brute Force pattern: 341 failed auths in 4 min. Inter-arrival time 1.2 ms — automated tooling (Hydra/Medusa) detected."},
+  "Network Attack": {conf:97,cve:"CVE-2024-21762", response:"BGP null-route advertised for attacker prefix. Upstream provider notified. Scrubbing centre activated.",explain:" DDoS LOIT pattern: 2847 pkt/s UDP flood, avg packet size 60B, high inter-arrival variance (std 0.004 ms). Classic amplification vector."},
+  "Port Scan":      {conf:82,cve:"CVE-2024-0682",  response:"Scan source added to firewall denylist. IDS rule R-112 triggered. Network segment isolated pending investigation.",explain:" PortScan SYN sweep: 65535 ports probed in 38s. RST/ACK ratio 0.96 — stealth SYN scan. Source 172.16.0.11 matches known recon actor."},
+  "Malware":        {conf:93,cve:"CVE-2023-44487", response:"C2 channel severed via DNS sinkhole. Infected endpoint quarantined (VLAN 999). IR team dispatched.",explain:" Infiltration signature: periodic beacon interval 60s, small encrypted payload 128B, IRC tunnel over port 6667. Known botnet fingerprint."},
 };
 
 /* ─── CSS ─────────────────────────────────────────────────────────────────── */
@@ -444,7 +444,7 @@ function DashboardPage({onNav,simMode}){
   const showRS=(msg,type)=>{setReqStatus({msg,type});setTimeout(()=>setReqStatus(null),5000);};
   const handleIR=type=>{
     if(type==="investigation"){onNav("incident");showRS("◈ Ticket INC-2847 opened — navigating to Incident Report…","primary");}
-    else if(type==="report"){onNav("incident");showRS("◈ Generating CICIDS2017 PDF report — redirecting…","warn");}
+    else if(type==="report"){onNav("incident");showRS("◈ Generating PDF report — redirecting…","warn");}
     else if(type==="lockdown"){showRS("⊗ LOCKDOWN INITIATED — Perimeter ACLs enforced. All inbound blocked.","danger");}
     else{showRS("▲ ESCALATED TO SOC — Priority 1 alert raised. On-call team notified.","muted");}
   };
@@ -455,7 +455,7 @@ function DashboardPage({onNav,simMode}){
     <main className="cn-main">
       {/* metrics */}
       <div>
-        <div className="sec-title">OPERATIONAL METRICS — CICIDS2017{simMode&&<span style={{color:"var(--accent2)",fontSize:10,marginLeft:8}}>[ SIMULATION ACTIVE ]</span>}</div>
+        <div className="sec-title">OPERATIONAL METRICS {simMode&&<span style={{color:"var(--accent2)",fontSize:10,marginLeft:8}}>[ SIMULATION ACTIVE ]</span>}</div>
         <div className="metrics-row">
           <div className="mcard danger"><div className="mc-icon">⚠</div><div className="mc-lbl">Active Alerts</div><div className="mc-val">{m.alerts}</div><div className="mc-delta up">↑ +12% vs last hour</div></div>
           <div className="mcard warn"><div className="mc-icon">🚫</div><div className="mc-lbl">Blocked IPs</div><div className="mc-val">{m.ips}</div><div className="mc-delta up">↑ +8 in last 5 min</div></div>
@@ -467,7 +467,7 @@ function DashboardPage({onNav,simMode}){
       {/* threat engine + donut */}
       <div className="three-col">
         <div className="panel"><div className="pc tl"/><div className="pc tr"/><div className="pc bl"/><div className="pc br"/>
-          <div className="sec-title">AI THREAT ENGINE — CICIDS2017</div>
+          <div className="sec-title">AI THREAT ENGINE </div>
           <div className="mode-tabs">{Object.keys(THREAT_CONFIG).map(m2=>(<button key={m2} className={`tab${mode===m2?" active":""}`} onClick={()=>setMode(m2)}>{m2}</button>))}</div>
           <div className="ai-box detected"><span className="ai-lbl">THREAT DETECTED</span>
             <p>Attack Type: <strong style={{color:"var(--danger)"}}>{mode}</strong></p>
@@ -475,7 +475,7 @@ function DashboardPage({onNav,simMode}){
             <div className="conf-bar"><div className="conf-fill" style={{width:`${tc.conf}%`}}/></div>
           </div>
           <div className="ai-box response"><span className="ai-lbl">AUTOMATED RESPONSE</span><p>{tc.response}</p></div>
-          <div className="ai-box explain"><span className="ai-lbl">AI EXPLANATION — CICIDS2017</span><p>{tc.explain} <strong style={{color:"var(--accent2)"}}>{tc.cve}</strong>.</p></div>
+          <div className="ai-box explain"><span className="ai-lbl">AI EXPLANATION </span><p>{tc.explain} <strong style={{color:"var(--accent2)"}}>{tc.cve}</strong>.</p></div>
           <div className="ip-grid">
             <div className="ip-cell"><div className="ip-cell-lbl">THREAT IP</div><div className="ip-cell-val">{threat.ip}</div></div>
             <div className="ip-cell"><div className="ip-cell-lbl">GEO ORIGIN</div><div className="ip-cell-val" style={{fontSize:11}}>{threat.geo}</div></div>
@@ -520,7 +520,7 @@ function DashboardPage({onNav,simMode}){
 
       {/* network chart */}
       <div className="panel"><div className="pc tl"/><div className="pc tr"/><div className="pc bl"/><div className="pc br"/>
-        <div className="sec-title">NETWORK PERFORMANCE — CICIDS2017 REPLAY</div>
+        <div className="sec-title">NETWORK PERFORMANCE </div>
         {chartReady&&<NetChart offset={netOff}/>}
       </div>
 
@@ -586,7 +586,7 @@ function DashboardPage({onNav,simMode}){
       {/* log */}
       <div className="panel"><div className="pc tl"/><div className="pc tr"/><div className="pc bl"/><div className="pc br"/>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
-          <div className="sec-title" style={{marginBottom:0,flex:1}}>LIVE SECURITY EVENT LOG — CICIDS2017</div>
+          <div className="sec-title" style={{marginBottom:0,flex:1}}>LIVE SECURITY EVENT LOG </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
             <span style={{fontFamily:"Share Tech Mono",fontSize:10,letterSpacing:2,color:"var(--dim)"}}>FILTER:</span>
             {["ALL","CRITICAL","WARNING","INFO"].map(f=>(<button key={f} className={`log-filter${logFilter===f?" active":""}`} onClick={()=>setLogFilter(f)}>{f}</button>))}
@@ -614,7 +614,7 @@ function DashboardPage({onNav,simMode}){
 
       <div className="status-bar">
         <div className="si"><div className="sdot-sm"/>CIPHERNEST ENGINE ONLINE</div>
-        <div className="si"><div className="sdot-sm"/>CICIDS2017 STREAM ACTIVE</div>
+        <div className="si"><div className="sdot-sm"/> STREAM ACTIVE</div>
         <div className="si"><div className="sdot-sm warn"/>3 AGENTS ELEVATED</div>
         <div className="si"><div className="sdot-sm"/>SOC DASHBOARD SYNCED</div>
         {simMode&&<div className="si"><div className="sdot-sm" style={{background:"var(--accent2)",animation:"simPulse 1s infinite"}}/>SIMULATION MODE ACTIVE</div>}
@@ -665,11 +665,11 @@ function UnblockPage(){
       <div className="panel">
         <div className="pc tl"/><div className="pc tr"/><div className="pc bl"/><div className="pc br"/>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}>
-          <div className="sec-title" style={{marginBottom:0,flex:1}}>IP UNBLOCK MANAGER — CICIDS2017</div>
+          <div className="sec-title" style={{marginBottom:0,flex:1}}>IP UNBLOCK MANAGER </div>
           <div style={{fontFamily:"Share Tech Mono",fontSize:10,letterSpacing:2,color:"var(--dim)"}}>{blocked.length} BLOCKED</div>
         </div>
         <div style={{display:"flex",gap:8,marginBottom:16}}>
-          <input className="ub-input" value={inp} onChange={e=>setInp(e.target.value)} placeholder="Enter CICIDS2017 IP (e.g. 172.16.0.1)..." onKeyDown={e=>e.key==="Enter"&&submit()}/>
+          <input className="ub-input" value={inp} onChange={e=>setInp(e.target.value)} placeholder="Enter IP (e.g. 172.16.0.1)..." onKeyDown={e=>e.key==="Enter"&&submit()}/>
           <button className="ub-submit" onClick={submit}>⊘ UNBLOCK</button>
         </div>
         <div style={{display:"flex",gap:6,marginBottom:12,flexWrap:"wrap"}}>
@@ -723,7 +723,7 @@ function IncidentPage(){
   const open=incidents.filter(a=>a.status==="OPEN").length;
   const resolved=incidents.filter(a=>a.status==="RESOLVED").length;
 
-  const reportText=`CIPHERNEST — CICIDS2017 INCIDENT REPORT
+  const reportText=`CIPHERNEST — INCIDENT REPORT
 ═══════════════════════════════════════════
 REPORT ID  : RPT-${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}-001
 GENERATED  : ${now.toUTCString()}
@@ -968,7 +968,7 @@ function SimPage(){
 
   return(
     <div className="sim-wrap">
-      <div className="sec-title">SIMULATION MODE & LOAD TEST — CICIDS2017</div>
+      <div className="sec-title">SIMULATION MODE & LOAD TEST </div>
 
       {/* Dataset upload */}
       <div className="panel"><div className="pc tl"/><div className="pc tr"/><div className="pc bl"/><div className="pc br"/>
@@ -1119,7 +1119,7 @@ export default function App(){
       {simMode&&(
         <div className="sim-banner">
           <div className="sim-banner-dot"/>
-          SIMULATION MODE ACTIVE — Live metrics are synthetically generated · CICIDS2017 dataset replay engaged
+          SIMULATION MODE ACTIVE — Live metrics are synthetically generated  dataset replay engaged
         </div>
       )}
 
